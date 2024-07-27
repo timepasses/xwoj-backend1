@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xw.xwoj.common.ErrorCode;
 import com.xw.xwoj.constant.CommonConstant;
 import com.xw.xwoj.exception.BusinessException;
+import com.xw.xwoj.judge.JudgeService;
 import com.xw.xwoj.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.xw.xwoj.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.xw.xwoj.model.entity.Question;
@@ -17,10 +18,12 @@ import com.xw.xwoj.model.entity.User;
 import com.xw.xwoj.model.enums.QuestionSubmitLanguageEnum;
 import com.xw.xwoj.model.enums.QuestionSubmitStatusEnum;
 import com.xw.xwoj.model.vo.QuestionSubmitVO;
+import com.xw.xwoj.service.QuestionService;
 import com.xw.xwoj.service.QuestionSubmitService;
 import com.xw.xwoj.mapper.QuestionSubmitMapper;
 import com.xw.xwoj.service.UserService;
 import com.xw.xwoj.utils.SqlUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,8 +39,15 @@ import java.util.stream.Collectors;
 @Service
 public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper, QuestionSubmit>
         implements QuestionSubmitService {
+
+    @Resource
+    private QuestionService questionService;
     @Resource
     private UserService userService;
+
+    @Resource
+    @Lazy
+    private JudgeService judgeService;
 
     /**
      * 提交题目
@@ -55,11 +65,11 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "编程语言错误");
         }
         long questionId = questionSubmitAddRequest.getQuestionId();
-//        // 判断实体是否存在，根据类别获取实体
-//        Question question = questionService.getById(questionId);
-//        if (question == null) {
-//            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-//        }
+        // 判断实体是否存在，根据类别获取实体
+        Question question = questionService.getById(questionId);
+        if (question == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
         // 是否已提交题目
         long userId = loginUser.getId();
         // 每个用户串行提交题目
@@ -76,10 +86,10 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据插入失败");
         }
         Long questionSubmitId = questionSubmit.getId();
-//        // 执行判题服务
-//        CompletableFuture.runAsync(() -> {
-//            judgeService.doJudge(questionSubmitId);
-//        });
+        // 执行判题服务
+        CompletableFuture.runAsync(() -> {
+            judgeService.doJudge(questionSubmitId);
+        });
         return questionSubmitId;
     }
 

@@ -38,15 +38,15 @@ public class QuestionEditRequest implements Serializable {
      */
     private String answer;
 
-//    /**
-//     * 判题用例
-//     */
-//    private List<JudgeCase> judgeCase;
-//
-//    /**
-//     * 判题配置
-//     */
-//    private JudgeConfig judgeConfig;
+    /**
+     * 判题用例
+     */
+    private List<JudgeCase> judgeCase;
+
+    /**
+     * 判题配置
+     */
+    private JudgeConfig judgeConfig;
 
     private static final long serialVersionUID = 1L;
 }
