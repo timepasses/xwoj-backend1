@@ -35,7 +35,7 @@ public class JudgeServiceImpl implements JudgeService {
     @Resource
     private JudgeManager judgeManager;
 
-    @Value("${codesandbox.type:example}")
+    @Value("${codesandbox.type:remote}")
     private String type;
 
 
@@ -64,6 +64,7 @@ public class JudgeServiceImpl implements JudgeService {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "题目状态更新错误");
         }
         // 4）调用沙箱，获取到执行结果
+        System.out.println("代码沙箱已调用");
         CodeSandbox codeSandbox = CodeSandboxFactory.newInstance(type);
         codeSandbox = new CodeSandboxProxy(codeSandbox);
         String language = questionSubmit.getLanguage();

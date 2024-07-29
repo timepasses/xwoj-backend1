@@ -308,7 +308,9 @@ public class QuestionController {
         }
         // 登录才能用
         final User loginUser = userService.getLoginUser(request);
+        System.out.println("1111111");
         long questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
+        System.out.println("2222222");
         return ResultUtils.success(questionSubmitId);
     }
 
